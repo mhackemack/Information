@@ -1,0 +1,493 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't like 10pt? Try 11pt or 12pt
+\documentclass[10pt]{article}
+
+% This is a helpful package that puts math inside length specifications
+\usepackage{calc}
+\usepackage{lipsum}
+
+%s\renewcommand*\footnoterule{}
+
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{\normalsize #1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+% Simpler bibsection for CV sections
+% (thanks to natbib for inspiration)
+\makeatletter
+\newlength{\bibhang}
+\setlength{\bibhang}{1em}
+\newlength{\bibsep}
+ {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
+\newenvironment{bibsection}%
+        {\begin{enumerate}{}{%
+       \setlength{\leftmargin}{\bibhang}%
+       \setlength{\itemindent}{-\leftmargin}%
+       \setlength{\itemsep}{\bibsep}%
+       \setlength{\parsep}{\z@}%
+        \setlength{\partopsep}{0pt}%
+        \setlength{\topsep}{0pt}}}
+        {\end{enumerate}\vspace{-.6\baselineskip}}
+\makeatother
+
+% Layout: Puts the section titles on left side of page
+\reversemarginpar
+
+%
+%         PAPER SIZE, PAGE NUMBER, AND DOCUMENT LAYOUT NOTES:
+%
+% The next \usepackage line changes the layout for CV style section
+% headings as marginal notes. It also sets up the paper size as either
+% letter or A4. By default, letter was used. If A4 paper is desired,
+% comment out the letterpaper lines and uncomment the a4paper lines.
+%
+% As you can see, the margin widths and section title widths can be
+% easily adjusted.
+%
+% ALSO: Notice that the includefoot option can be commented OUT in order
+% to put the PAGE NUMBER *IN* the bottom margin. This will make the
+% effective text area larger.
+%
+% IF YOU WISH TO REMOVE THE ``of LASTPAGE'' next to each page number,
+% see the note about the +LP and -LP lines below. Comment out the +LP
+% and uncomment the -LP.
+%
+% IF YOU WISH TO REMOVE PAGE NUMBERS, be sure that the includefoot line
+% is uncommented and ALSO uncomment the \pagestyle{empty} a few lines
+% below.
+%
+
+%% Use these lines for letter-sized paper
+\usepackage[paper=letterpaper,
+            %includefoot, % Uncomment to put page number above margin
+            marginparwidth=1.1in,     % Length of section titles
+            marginparsep=.05in,       % Space between titles and text
+            margin=0.70in,               % 1 inch margins
+            includemp]{geometry}
+
+%% Use these lines for A4-sized paper
+%\usepackage[paper=a4paper,
+%            %includefoot, % Uncomment to put page number above margin
+%            marginparwidth=30.5mm,    % Length of section titles
+%            marginparsep=1.5mm,       % Space between titles and text
+%            margin=25mm,              % 25mm margins
+%            includemp]{geometry}
+
+%% More layout: Get rid of indenting throughout entire document
+\setlength{\parindent}{0in}
+
+\usepackage[shortlabels]{enumitem}
+
+%% Reference the last page in the page number
+%
+% NOTE: comment the +LP line and uncomment the -LP line to have page
+%       numbers without the ``of ##'' last page reference)
+%
+% NOTE: uncomment the \pagestyle{empty} line to get rid of all page
+%       numbers (make sure includefoot is commented out above)
+%
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+%\pagestyle{empty}      % Uncomment this to get rid of page numbers
+\fancyhf{}\renewcommand{\headrulewidth}{0pt}
+\fancyfootoffset{\marginparsep+\marginparwidth}
+\newlength{\footpageshift}
+\setlength{\footpageshift}
+          {0.5\textwidth+0.5\marginparsep+0.5\marginparwidth-2in}
+\lfoot{\hspace{\footpageshift}%
+       \parbox{4in}{\, \hfill %
+                    \arabic{page} of \protect\pageref*{LastPage} % +LP
+%                    \arabic{page}                               % -LP
+                    \hfill \,}}
+
+% Finally, give us PDF bookmarks
+\usepackage{color,hyperref}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.3}
+\hypersetup{colorlinks,breaklinks,
+            linkcolor=darkblue,urlcolor=darkblue,
+            anchorcolor=darkblue,citecolor=darkblue}
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The title (name) with a horizontal rule under it
+% (optional argument typesets an object right-justified across from name
+%  as well)
+%
+% Usage: \makeheading{name}
+%        OR
+%        \makeheading[right_object]{name}
+%
+% Place at top of document. It should be the first thing.
+% If ``right_object'' is provided in the square-braced optional
+% argument, it will be right justified on the same line as ``name'' at
+% the top of the CV. For example:
+%
+%       \makeheading[\emph{Curriculum vitae}]{Your Name}
+%
+% will put an emphasized ``Curriculum vitae'' at the top of the document
+% as a title. Likewise, a picture could be included:
+%
+%   \makeheading[\includegraphics[height=1.5in]{my_picutre}]{Your Name}
+%
+% the picture will be flush right across from the name.
+\newcommand{\makeheading}[2][]%
+        {\hspace*{-\marginparsep minus \marginparwidth}%
+         \begin{minipage}[t]{\textwidth+\marginparwidth+\marginparsep}%
+             {\huge \bfseries #2 \hfill #1}\\[-0.15\baselineskip]%
+                 \rule{\columnwidth}{1pt}%
+         \end{minipage}}
+
+% The section headings
+%
+% Usage: \section{section name}
+\renewcommand{\section}[1]{\pagebreak[3]%
+    \hyphenpenalty=10000%
+    \vspace{1.3\baselineskip}%
+    \phantomsection\addcontentsline{toc}{section}{#1}%
+    \noindent\llap{\scshape\smash{\parbox[t]{\marginparwidth}{\raggedright #1}}}%
+    \vspace{-\baselineskip}\par}
+
+% An itemize-style list with lots of space between items
+\newenvironment{outerlist}[1][\enskip\textbullet]%
+        {\begin{itemize}[#1,leftmargin=*]}{\end{itemize}%
+         \vspace{-.6\baselineskip}}
+
+% An environment IDENTICAL to outerlist that has better pre-list spacing
+% when used as the first thing in a \section
+\newenvironment{lonelist}[1][\enskip\textbullet]%
+        {\begin{list}{#1}{%
+        \setlength{\partopsep}{0pt}%
+        \setlength{\topsep}{0pt}}}
+        {\end{list}\vspace{-.6\baselineskip}}
+
+% An itemize-style list with little space between items
+\newenvironment{innerlist}[1][\enskip\textbullet]%
+        {\begin{itemize}[#1,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt]}
+        {\end{itemize}}
+
+% An environment IDENTICAL to innerlist that has better pre-list spacing
+% when used as the first thing in a \section
+\newenvironment{loneinnerlist}[1][\enskip\textbullet]%
+        {\begin{itemize}[#1,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt]}
+        {\end{itemize}\vspace{-.6\baselineskip}}
+
+% To add some paragraph space between lines.
+% This also tells LaTeX to preferably break a page on one of these gaps
+% if there is a needed pagebreak nearby.
+\newcommand{\blankline}{\quad\pagebreak[3]}
+\newcommand{\halfblankline}{\quad\vspace{-0.5\baselineskip}\pagebreak[3]}
+
+% Uses hyperref to link DOI
+\newcommand\doilink[1]{\href{http://dx.doi.org/#1}{#1}}
+\newcommand\doi[1]{doi:\doilink{#1}}
+
+% For \url{SOME_URL}, links SOME_URL to the url SOME_URL
+\providecommand*\url[1]{\href{#1}{#1}}
+% Same as above, but pretty-prints SOME_URL in teletype fixed-width font
+\renewcommand*\url[1]{\href{#1}{\texttt{#1}}}
+
+% For \email{ADDRESS}, links ADDRESS to the url mailto:ADDRESS
+\providecommand*\email[1]{\href{mailto:#1}{#1}}
+% Same as above, but pretty-prints ADDRESS in teletype fixed-width font
+%\renewcommand*\email[1]{\href{mailto:#1}{\texttt{#1}}}
+
+%\providecommand\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+%\providecommand\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%    \TeX}}
+\providecommand\BibTeX{{B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    \TeX}}
+\providecommand\Matlab{\textsc{Matlab}}
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\makeheading{Michael W. Hackemack}
+%\blfootnote{Updated as of \today.}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Contact Information}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+% NOTE: Mind where the & separators and \\ breaks are in the following
+%       table.
+%
+% ALSO: \rcollength is the width of the right column of the table
+%       (adjust it to your liking; default is 1.85in).
+%
+\newlength{\rcollength}\setlength{\rcollength}{2.40in}%
+%
+\begin{tabular}[t]{@{}p{\textwidth-\rcollength}p{\rcollength}}
+Knolls Atomic Power Laboratory & \textit{Work:} +1-518-395-7293 \\
+P.O. Box 1072            & \textit{Mobile:} +1-713-419-4198 \\
+Schenectady, NY 12301           & \textit{E-mail:} \email{michael.hackemack@unnpp.gov}\\
+\end{tabular}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Research Interests}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+My research interests include advanced deterministic transport algorithms and implementations, high-fidelity multiphysics coupling techniques and simulations, and uncertainty quantification techniques for nuclear engineering applications. In particular, I have focused on parallel acceleration methods and advanced spatial discretization techniques for the transport equation on arbitrary polytope meshes.
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Education}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\href{http://www.tamu.edu/}{\textbf{Texas A\&M University}},
+College Station, TX USA
+\begin{outerlist}
+
+\item[] Ph.D., Nuclear Engineering, August 2016
+        \begin{innerlist}
+        \item Thesis Title: \emph{Higher-Order DGFEM Transport Calculations on Polytope Meshes for Massively-Parallel Architectures}
+        \item Adviser: Professor Jean C. Ragusa
+        \item Area of Study: Reactor physics and methods development
+        \end{innerlist}
+
+\item[] M.S., Nuclear Engineering, May 2013
+        \begin{innerlist}
+        \item Thesis Title: \emph{Characterization of a Stochastic Procedure for the Generation and Transport of Fission Fragments within Nuclear Fuels}
+        \item Adviser: Professor Gamal Akabani
+        \item Area of Study: Reactor physics and methods development
+        \end{innerlist}
+
+\item[] B.S., Nuclear Engineering, May 2011
+        \begin{innerlist}
+        \item \emph{Summa cum Laude}, with honors in engineering
+        \item Undergraduate research in experimental thermal hydraulics
+        \item Adviser: Frederick Best
+        \item Minor in Mathematics
+        \end{innerlist}
+
+\end{outerlist}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Professional Experience}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\href{https://navalnuclearlab.energy.gov/}{\textbf{Knolls Atomic Power Laboratory}},
+Schenectady, NY USA
+\begin{outerlist}
+
+\item[] \textit{Senior Engineer}%
+        \hfill \textbf{July 2016 to Present}
+\begin{innerlist}
+\item[] Worked on a team to develop a deterministic transport solver, Jaguar, for nuclear reactor core design and shielding applications.
+\end{innerlist}
+
+\end{outerlist}
+
+\halfblankline
+
+\href{https://navalnuclearlab.energy.gov/}{\textbf{Bettis Atomic Power Laboratory}},
+West Mifflin, NY, USA
+
+\begin{outerlist}
+\item[] \textit{Graduate Research Fellow}%
+        \hfill \textbf{May 2013 to August 2013}
+\begin{innerlist}
+\item[] Demonstrated a Monte Carlo implemenation of the Predictor-Corrector Quasi-Static (PCQS) method.
+\end{innerlist}
+
+\item[] \textit{Graduate Research Fellow}%
+        \hfill \textbf{May 2012 to August 2012}
+\begin{innerlist}
+\item[] Demonstrated an {\em a priori} error estimator for the time-dependent multigroup diffusion equations implemented in the RELAP5-3D software.
+\end{innerlist}
+
+\end{outerlist}
+
+\halfblankline
+
+\textbf{\href{https://www.luminant.com/}{Luminant Energy}},
+Glen Rose, TX, USA
+\begin{outerlist}
+
+\item[] \textit{Core Performance Intern}%
+        \hfill \textbf{May 2009 to August 2009}
+\begin{innerlist}
+\item[] Performed code validation for dry cask storage procedures. Assisted with dry cask storage and spent fuel pool operations. Performed spent fuel pool thermal loading analyses. Assisted with core power manipulations and in-core flux mapping.
+\end{innerlist}
+
+\item[] \textit{Fast Response Engineering Intern}%
+        \hfill \textbf{May 2010 to August 2010}
+\begin{innerlist}
+\item[] Performed quality control inspections on penetration seals. Conducted pipe stress analysis on main steam line components.
+\end{innerlist}
+
+\item[] \textit{Radiation Protection Intern}%
+        \hfill \textbf{May 2011 to August 2011}
+\begin{innerlist}
+\item[] Performed radwaste analysis on plant waste streams to reduce disposal costs. Wrote new procedures for performing future radwaste analysis.
+\end{innerlist}
+
+\end{outerlist}
+
+\halfblankline
+
+\textbf{\href{https://www.tamu.edu/}{Texas A\&M University}},
+College Station, TX, USA
+\begin{outerlist}
+
+\item[] \textit{Undergraduate Research Assistant}%
+        \hfill \textbf{June 2008 to May 2011}
+\begin{innerlist}
+\item[] Fabricated open and closed loop two-phase TH systems. Conducted thermodynamic analysis of microgravity power sources. Wrote procedural and laboratory safety analysis reports.
+\end{innerlist}
+
+\end{outerlist}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Publications}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\vspace{-.325cm}
+\begin{bibsection}
+\item M.W. Hackemack and J.C. Ragusa, ``A DFEM Formulation of the Diffusion Equation on Arbitrary Polyhedral Grids,'' \textit{Transactions of the American Nuclear Society}, Anaheim, CA (2014).
+
+\item M.W. Hackemack and J.M. Pounders, ``Implementation of an \textit{a priori} Time Step Estimation for the Multigroup Neutron Diffusion Equation in Asynchronously-Coupled RELAP5-3D,'' \textit{PHYSOR 2014 - The Role of Reactor Physics toward a Sustainable Future}, Kyoto, Japan (2014).
+
+\item T.M Martin, V. Bhakta, A. Al-Harbi, M.W. Hackemack, G. Tabacaru, R. Tribble, S. Shankar, and G. Akabani, ``Preliminary Production of At-211 at the Texas A\&M University Cyclotron Institute,'' \textit{Health Physics}, \textbf{107}, 1--9 (2014).
+
+\item M.W. Hackemack, J.C. Ragusa, D.P. Griesheimer, and J.M. Pounders, ``A Monte Carlo
+	Implementation of the Predictor-Corrector Quasi-Static Method,'' 
+	\textit{Mathematics and Computation}, Sun Valley, ID (2013).
+
+\end{bibsection}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Publications in Preparation}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\vspace{-.325cm}
+\begin{bibsection}
+\item M.W. Hackemack, \textit{Quadratic Serendipity Functions for Transport} (2017).
+
+\item M. Hanus, J.C. Ragusa, and M.W. Hackemack, \textit{Thermal Upscatter Acceleration Methods} (2017).
+
+\item M.W. Hackemack, \textit{Scalable DSA Preconditioners} (2017).
+
+\item M.W. Hackemack, \textit{PWQ for Diffusive Transport Problems} (2017).
+
+\item M.W. Hackemack and T.L. Becker, \textit{Negative Flux Fixups for LD} (2017).
+
+\item M.W. Hackemack, \textit{Negative Flux Fixups for Nodal FEM} (2017).
+
+\item M.W. Hackemack, \textit{Efficient Polygonal Quadrature} (2017).
+
+\item M.W. Hackemack, \textit{Algorithm for Analytical PWQ Functions} (2017).
+
+\item M.W. Hackemack, \textit{Product Quadratic Serendipity for Extruded Cells} (2018).
+
+\item M.W. Hackemack, \textit{Space-Energy Multigrid Acceleration} (2018).
+
+\item M.W. Hackemack, \textit{Hierarchical Polygonal Functions} (2019).
+
+\end{bibsection}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Honors and Awards}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\href{http://www.scuref.org/}{United States Department of Energy}
+\begin{innerlist}
+\item \href{http://www.scuref.org/rfp-01/}{Rickover Fellowship Program in Nuclear Engineering}, 2011--2016
+\item \href{https://neup.inl.gov/SitePages/Home.aspx}{Nuclear Energy University Program Scholar}, 2011
+\end{innerlist}
+
+\halfblankline
+
+Commercial Nuclear Power
+\begin{innerlist}
+\item \href{https://www.nrc.gov/about-nrc/grants.html}{U.S Nuclear Regulatory Commission Education Scholar}, 2009
+\item \href{http://www.nei.org/Careers-Education/Education-Resources/Resources-for-Teachers-and-Students/Scholarships-Internships-and-Fellowships}{National Academy for Nuclear Training Scholar}, 2009
+\end{innerlist}
+
+\halfblankline
+
+\href{http://www.tamu.edu}{Texas A\&M University}
+\begin{innerlist}
+\item \href{https://engineering.tamu.edu/apply/scholarships/outstanding-senior-engineer}
+           {Outstanding Senior Engineer Award}, 2010
+\item University Scholarship, 2007--2011
+\end{innerlist}
+
+\halfblankline
+
+Miscellaneous
+\begin{innerlist}
+\item \href{http://www.scouting.org/}{Eagle Scout}
+\item \href{https://www.tbp.org/}{Tau Beta Pi Engineering Honor Society}
+\item \href{http://www.ans.org/const/ansnhs/}{Alpha Nu Sigma National Honor Society}
+\item \href{http://www.nscs.org/}{National Society of Collegiate Scholars}
+\end{innerlist}
+
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\section{References Available to Contact}
+%-------------------------------------------------------------------------------------------------------------------------------------------------
+\href
+{http://engineering.tamu.edu/nuclear/people/ragusa-jean-c}
+{\textbf{Dr.~Jean~C.~Ragusa}}
+(e-mail:~\href{mailto:jean.ragusa@tamu.edu}{jean.ragusa@tamu.edu}; phone:~+1-979-862-2033)
+%
+\begin{innerlist}
+    \item Professor,
+        \href{http://www.nuclear.tamu.edu/}{Department of Nuclear Engineering},
+        \href{http://www.tamu.edu/}{Texas A\&M University}
+
+    %\item[$\diamond$] 205 Dreese Laboratories, 2015 Neil Ave., Columbus,  OH  43210
+
+    \item[$\star$] \emph{Dr.~Ragusa was my doctoral adviser.}
+\end{innerlist}
+
+\halfblankline
+
+\href
+{http://engineering.tamu.edu/nuclear/people/madams}
+{\textbf{Dr.~Marvin~L.~Adams}}
+(e-mail:~\href{mailto:mladams@tamu.edu}{mladams@tamu.edu}; phone:~+1-979-845-4198)
+\begin{innerlist}
+    \item Professor,
+        \href{http://www.nuclear.tamu.edu/}{Department of Nuclear Engineering},
+        \href{http://www.tamu.edu/}{Texas A\&M University}
+
+    %\item[$\diamond$] 395 Dreese Laboratories, 2015 Neil Ave., Columbus, OH  43210
+
+    \item[$\star$] \emph{Dr.~Adams was a doctoral committee member.}
+\end{innerlist}
+
+\halfblankline
+
+{\textbf{Dr.~Timothy~H.~Trumbull}}
+(e-mail:~\href{mailto:timothy.trumbull@unnpp.gov}{timothy.trumbull@unnpp.gov}; phone:~+1-518-395-5203)
+\begin{innerlist}
+    \item Manager,
+        \href{https://navalnuclearlab.energy.gov/}{Knolls Atomic Power Laboratory}
+
+    %\item[$\diamond$] 395 Dreese Laboratories, 2015 Neil Ave., Columbus, OH  43210
+
+    \item[$\star$] \emph{Dr.~Trumbull is my current manager.}
+\end{innerlist}
+
+\halfblankline
+
+{\textbf{Dr.~Troy~L.~Becker}}
+(e-mail:~\href{mailto:troy.becker@unnpp.gov}{troy.becker@unnpp.gov}; phone:~+1-518-395-4110)
+\begin{innerlist}
+    \item Principal Engineer,
+        \href{https://navalnuclearlab.energy.gov/}{Knolls Atomic Power Laboratory}
+
+    %\item[$\diamond$] 395 Dreese Laboratories, 2015 Neil Ave., Columbus, OH  43210
+
+    \item[$\star$] \emph{Dr.~Becker is my current team lead.}
+\end{innerlist}
+
+\blfootnote{Updated as of \today.}
+
+
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
